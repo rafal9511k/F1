@@ -18,6 +18,7 @@
 
 #include "stm32f1xx.h"
 
+#define HC_SR04_CLK_PEROID 0.125
 
 
 typedef enum {
@@ -29,6 +30,20 @@ typedef enum {
 	notReady
 } hc_sr04_state;
 
-extern volatile hc_sr04_state hc_sr04;
-volatile __hc_sr04_counter_cnt;
+void hc_sr04_init(void);
+void __hc_sr04_tim_init(void);
+void __hc_sr04_exti_init(void);
+hc_sr04_state hc_sr04_measure(void);
+void hc_sr04_irq_function(void);
+extern void __hc_sr04_set_trigger(void);
+uint16_t __hc_sr04_get_distance_mm(void);
+extern void __hc_sr04_stop_timer(void);
+extern void __hc_sr04_start_timer(void);
+extern uint16_t __hc_sr04_timer_get_cnt(void);
+
+
+volatile hc_sr04_state hc_sr04;
+volatile uint16_t __hc_sr04_counter_cnt;
+
+
 #endif /* HC_SR04_H_ */
