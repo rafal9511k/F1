@@ -83,7 +83,7 @@ hc_sr04_state hc_sr04_measure(void){
 			break;
 	}
 
-	return result;
+	return requestForMeasure;
 }
 
 
