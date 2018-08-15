@@ -13,6 +13,7 @@
 #include "stm32f1xx.h"
 #include "stdlib.h"
 #include "string.h"
+#include "math.h"
 
 void __usart_tx_init(void);
 void __dma_transmit_init(char *buffer);
@@ -30,18 +31,24 @@ int main(void)
 	__dma_transmit_init(buffer);
 //	USART2->SR &= ~USART_SR_TC;
 
-
+	uint16_t value;
 	while(1){
-		HAL_ADC_Start(&adc);
+		value = 0;
+		for(int i = 0; i < 10; i++){
+			HAL_ADC_Start(&adc);
 
-		for(uint32_t i =0; i < 0x1ff00; i++){
+			for(uint32_t j = 0; j < 0xff00; j++){
 
+			}
+			value += HAL_ADC_GetValue(&adc) ;
 		}
-		uint32_t value = HAL_ADC_GetValue(&adc);
+		value /= 10;
+		double voltage = ((double)value) * 0.80566;
+		double distance = 1093.7 * exp(-0.002 * voltage);
 		for(uint16_t i = 0; i < 25; i++){
 			buffer[i] = '\0';
 		}
-		itoa((int)value, buffer, 10);
+		itoa((int)distance, buffer, 10);
 		strcat(buffer, "\n");
 		DMA1_Channel7->CCR &= ~DMA_CCR_EN;
 		DMA1->IFCR |= DMA_IFCR_CGIF7;
