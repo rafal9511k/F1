@@ -12,7 +12,7 @@
 #include "stm32f1xx.h"
 #include <my_lib_adc.h>
 #include <sharp_distance.h>
-#include <my_lib.h>
+
 int main(void)
 {
 	__adc1_single_channel_init();
