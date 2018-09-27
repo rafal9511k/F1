@@ -17,7 +17,7 @@ void __adc1_single_channel_init(void){
 	while (ADC1->CR2 & ADC_CR2_CAL){
 		// waiting for end of calibration
 	}
-	ADC1->SMPR2 |= ADC_SMPR2_SMP0_1;		// channel 0 sampling 13.5 cycles
+	ADC1->SMPR2 |= ADC_SMPR2_SMP0_1 | ADC_SMPR2_SMP0_2;		// channel 0 sampling 13.5 cycles
 }
 void __adc1_start_conversion(void){
 	ADC1->CR2 |= ADC_CR2_SWSTART;

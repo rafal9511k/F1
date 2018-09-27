@@ -5,7 +5,7 @@
  *      Author: rafal
  */
 
-#include <my_lib_adc.h>
+#include "my_lib_adc.h"
 
 void __adc1_single_channel_init(void){
 	__adc1_single_channel_gpio_init();

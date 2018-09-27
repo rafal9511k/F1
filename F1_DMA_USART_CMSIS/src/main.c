@@ -9,57 +9,52 @@
 */
 
 
-#include "stm32f1xx.h"
+#include "stm32f103xb.h"
 
-void __usart_tx_init(void);
-void __dma_transmit_init(char *buffer);
+#include "my_lib_usart.h"
 
 char buffer[] = "1\n2\n";
-
+uint8_t rx_buffer[RX_BUFFER_SIZE];
+uint32_t rx_cnt;
+uint8_t rx_data_rdy;
 int main(void)
 {
-	__usart_tx_init();
-	__dma_transmit_init(buffer);
-//	USART2->SR &= ~USART_SR_TC;
 
+//	__usart_tx_init();
+//	__dma_transmit_init(buffer);
+
+//	USART2->SR &= ~USART_SR_TC;
+	__usart_rx_init();
+	__usart_rx_irq_enable();
+	NVIC_EnableIRQ(38);
 
 	while(1){
 		for(uint32_t i =0; i < 0xfffff; i++){
 
 		}
-		DMA1_Channel7->CCR &= ~DMA_CCR_EN;
-		DMA1->IFCR |= DMA_IFCR_CGIF7;
-		DMA1_Channel7->CNDTR = 7;
-		USART2->SR &= ~USART_SR_TC;
-		DMA1_Channel7->CCR|= DMA_CCR_EN;
+	//	DMA1_Channel7->CCR &= ~DMA_CCR_EN;
+	//	DMA1->IFCR |= DMA_IFCR_CGIF7;
+	//	DMA1_Channel7->CNDTR = 7;
+	//	USART2->SR &= ~USART_SR_TC;
+	//	DMA1_Channel7->CCR|= DMA_CCR_EN;
 
 
 	}
 }
 
-
-void __usart_tx_init(void){
-	RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
-	RCC->APB2ENR |= RCC_APB2ENR_IOPAEN;
-	GPIOA->CRL = GPIO_CRL_CNF2_1 | GPIO_CRL_MODE2;	// Push-Pull, AF, 50MHz
-
-	USART2->BRR = 0x341;							// baudrate 9600, 51.08
-	USART2->CR1 = USART_CR1_UE | USART_CR1_TE;		// USART enable, tx enable
-	USART2->CR3 = USART_CR3_DMAT;					// DMA Tx
-//	USART2->DR = 'a';
-}
-
-void __dma_transmit_init(char *buffer){
-	RCC->AHBENR |= RCC_AHBENR_DMA1EN;
-
-	DMA1_Channel7->CCR = DMA_CCR_MINC | DMA_CCR_DIR;	// 8bit to 8bit from memory,
-																	// incremented memory address, enable channel
-	DMA1_Channel7->CMAR = (uint32_t)buffer; 	// memory address
-	DMA1_Channel7->CPAR = (uint32_t)(&(USART2->DR));		// destination address
-	DMA1_Channel7->CNDTR = 25;
-	DMA1_Channel7->CCR |= DMA_CCR_EN;
+void USART2_IRQHandler(void){
+	rx_buffer[rx_cnt] = USART2->DR;
+	rx_buffer[rx_cnt + 1] = '\0';
+	if (rx_buffer[rx_cnt] == '\r'){
+		rx_data_rdy = 1;
+	}
+	if(rx_cnt < RX_BUFFER_SIZE - 1){
+		rx_cnt++;
+	}
 
 }
+
+
 
 
 

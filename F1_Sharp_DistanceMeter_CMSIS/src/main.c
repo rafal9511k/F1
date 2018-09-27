@@ -10,8 +10,8 @@
 
 
 #include "stm32f1xx.h"
-#include <my_lib_adc.h>
-#include <sharp_distance.h>
+#include "my_lib_adc.h"
+#include "sharp_distance.h"
 
 int main(void)
 {

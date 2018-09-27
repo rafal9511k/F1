@@ -15,27 +15,53 @@
 #include "my_lib.h"
 #include "sharp_distance.h"
 #include "servo.h"
+#include "my_lib_usart.h"
+
 
 volatile double adc_voltage;
 volatile pid_regulator pid;
 double angle;
 
+uint8_t rx_buffer[RX_BUFFER_SIZE];
+uint32_t rx_cnt;
+uint8_t rx_data_rdy;
+
 int main(void)
 {
 	angle = 0;
 	PID_Initalize(&pid);
-	PID_set_parameters(&pid, 0.2, 0.003, 0.001, 0.02);
-	PID_set_setpoint(&pid, 300);
+	PID_set_parameters(&pid, 0.2, 0.01, 0.005, 0.02);
+	PID_set_setpoint(&pid, 280);
 	__pwm_init();
 	__pwm_enable_base_interrupt();
 	__pwm_set_duty(0.075);
-	__adc1_single_channel_init();
-	__adc1_eoc_interrupt_enable();
-	NVIC_EnableIRQ(ADC1_2_IRQn);
-	NVIC_EnableIRQ(TIM2_IRQn);
+//	__adc1_single_channel_init();
+//	__adc1_eoc_interrupt_enable();
+//	NVIC_EnableIRQ(ADC1_2_IRQn);
+//	NVIC_EnableIRQ(TIM2_IRQn);
+	__usart_rx_init();
+	__usart_rx_irq_enable();
+	NVIC_EnableIRQ(USART2_IRQn);
 	__adc1_start_conversion();
-	while(1){
 
+	while(1){
+		if(rx_data_rdy == 1){
+			pid.actual_position = (double)(uint16_t)atoi(rx_buffer);
+			rx_data_rdy = 0;
+			rx_cnt = 0;
+			rx_buffer[0] = "\0";
+			double pid_tmp = PID_calculate(&pid);
+
+			angle = pid_tmp;
+			if(angle > 90.0){
+				angle = 90.0;
+			}
+			if(angle < -90.0){
+				angle = -90.0;
+			}
+			double duty = __servo_angle_to_duty(angle);
+			__pwm_set_duty(__servo_angle_to_duty(angle));
+		}
 	}
 }
 
@@ -60,4 +86,8 @@ void ADC1_2_IRQHandler(void){
 	}
 	double duty = __servo_angle_to_duty(angle);
 	__pwm_set_duty(__servo_angle_to_duty(angle));
+}
+
+void USART2_IRQHandler(void){
+
 }

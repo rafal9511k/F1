@@ -37,7 +37,7 @@ int main(void)
 		for(int i = 0; i < 10; i++){
 			HAL_ADC_Start(&adc);
 
-			for(uint32_t j = 0; j < 0xff00; j++){
+			for(uint64_t j = 0; j < 0xff00; j++){
 
 			}
 			value += HAL_ADC_GetValue(&adc) ;
