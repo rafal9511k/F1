@@ -47,11 +47,38 @@ void __usart_rx_irq_enable(void){
 	rx_cnt = 0;
 	USART2->CR1 |= USART_CR1_RXNEIE;
 }
+/*
+ * 		Function __usart_rx_get_line returns length of line when new line of data is available if not
+ * 		return 0;
+ */
 
-uint32_t __usart_rx_check_line_ended(void){
-	if(strstr(rx_buffer, "\r") == NULL){
-		return 0;
-	}else{
-		return 1;
+
+uint32_t __usart_rx_get_line(char *buffer){
+	static char *end_of_line = NULL;
+	static char *new_end_of_line = NULL;
+	uint32_t length;
+	if(end_of_line == NULL){
+		end_of_line = strstr(rx_buffer, RX_END_OF_LINE);
+		if(end_of_line == NULL){
+			new_end_of_line == NULL;
+			return 0;
+		} else {
+			buffer = rx_buffer;
+			return (end_of_line - buffer);
+		}
+	} else {
+		new_end_of_line = strstr(end_of_line, RX_END_OF_LINE);
+		if( new_end_of_line == NULL){
+			return 0;
+		} else {
+			buffer = end_of_line;
+			length = new_end_of_line - end_of_line;
+			end_of_line = new_end_of_line;
+			return length;
+		}
 	}
+
+
 }
+
+
