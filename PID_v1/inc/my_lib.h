@@ -15,8 +15,7 @@
 TIM_HandleTypeDef tim;
 ADC_HandleTypeDef adc;
 
-void __usart_tx_init(void);
-void __dma_transmit_init(char *buffer);
+
 void __dma_send_data(uint16_t data, char *buffer);
 void __adc_init(void);
 void __adc_start_conversion(void);
