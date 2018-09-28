@@ -9,7 +9,7 @@
 #ifndef MY_LIB_USART_H_
 #define MY_LIB_USART_H_
 
-#define RX_BUFFER_SIZE 16
+#define RX_BUFFER_SIZE 256
 #define RX_END_OF_LINE "\r"
 //#define RX_END_OF_LINE "\l\n"
 
@@ -18,6 +18,7 @@ void __dma_transmit_init(char *buffer);
 void __usart_rx_init(void);
 void __usart_rx_irq_enable(void);
 uint32_t __usart_rx_get_line(char *buffer);
+void __usart_irq_function(void);
 
 
 #endif /* MY_LIB_USART_H_ */

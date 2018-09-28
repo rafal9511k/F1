@@ -27,31 +27,38 @@ int main(void)
 	__usart_rx_init();
 	__usart_rx_irq_enable();
 	NVIC_EnableIRQ(38);
-
+//for(int i = 0; i < RX_BUFFER_SIZE; i++){
+//		rx_buffer[i] = '1';
+//	}
+//	rx_buffer[3] = '\r';
+//	rx_buffer[9] = '\r';
+//	rx_buffer[15] = '\0';
+	__usart_rx_init();
+	__usart_rx_irq_enable();
+	char buffer[128];
+	uint32_t n = 0;
+	char line_buffer[10][10];
+	uint32_t size = sizeof(RX_END_OF_LINE);
 	while(1){
-		for(uint32_t i =0; i < 0xfffff; i++){
+//		for(uint32_t i =0; i < 0xfffff; i++){
 
-		}
+//		}
 	//	DMA1_Channel7->CCR &= ~DMA_CCR_EN;
 	//	DMA1->IFCR |= DMA_IFCR_CGIF7;
 	//	DMA1_Channel7->CNDTR = 7;
 	//	USART2->SR &= ~USART_SR_TC;
 	//	DMA1_Channel7->CCR|= DMA_CCR_EN;
+	if(n == 1){
+		uint32_t length = __usart_rx_get_line(buffer);
+	}
+
 
 
 	}
 }
 
 void USART2_IRQHandler(void){
-	rx_buffer[rx_cnt] = USART2->DR;
-	rx_buffer[rx_cnt + 1] = '\0';
-	if (rx_buffer[rx_cnt] == '\r'){
-		rx_data_rdy = 1;
-	}
-	if(rx_cnt < RX_BUFFER_SIZE - 1){
-		rx_cnt++;
-	}
-
+	__usart_irq_function();
 }
 
 
