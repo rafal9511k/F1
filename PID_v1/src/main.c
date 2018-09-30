@@ -15,19 +15,21 @@
 #include "my_lib.h"
 #include "sharp_distance.h"
 #include "servo.h"
-#include "my_lib_usart.h"
+#include "../F1_my_library_usart/inc/my_lib_usart.h"
 
 
 volatile double adc_voltage;
 volatile pid_regulator pid;
 double angle;
 
-char_buffer[RX_BUFFER_SIZE];
+char buffer[16];
 uint32_t rx_cnt;
 uint8_t rx_data_rdy;
 
 int main(void)
 {
+	__usart_rx_init();
+	__usart_rx_irq_enable();
 	angle = 0;
 	PID_Initalize(&pid);
 	PID_set_parameters(&pid, 0.2, 0.01, 0.005, 0.02);
@@ -45,11 +47,8 @@ int main(void)
 	__adc1_start_conversion();
 
 	while(1){
-		if(rx_data_rdy == 1){
-			pid.actual_position = (double)(uint16_t)atoi(rx_buffer);
-			rx_data_rdy = 0;
-			rx_cnt = 0;
-			rx_buffer[0] = "\0";
+		if(__usart_rx_get_line(buffer) == 1){
+			pid.actual_position = (double)(uint16_t)atoi(buffer);
 			double pid_tmp = PID_calculate(&pid);
 
 			angle = pid_tmp;

@@ -3,6 +3,7 @@
 	<name>F1_my_library_usart</name>
 	<comment></comment>
 	<projects>
+		<project>F1_my_library_usart</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
