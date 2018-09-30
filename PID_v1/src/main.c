@@ -22,7 +22,7 @@ volatile double adc_voltage;
 volatile pid_regulator pid;
 double angle;
 
-uint8_t rx_buffer[RX_BUFFER_SIZE];
+char_buffer[RX_BUFFER_SIZE];
 uint32_t rx_cnt;
 uint8_t rx_data_rdy;
 
