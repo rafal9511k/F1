@@ -20,5 +20,4 @@ void __usart_rx_irq_enable(void);
 uint32_t __usart_rx_get_line(char *buffer);
 void __usart_irq_function(void);
 
-
 #endif /* MY_LIB_USART_H_ */
